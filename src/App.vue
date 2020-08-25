@@ -17,11 +17,13 @@
                   multiple
                 ></v-combobox>
                 <v-btn
-                  v-on:click="requestCarInformation()"
+                  v-on:click="getWebInformation()"
                   small
                   color="primary"
-                  >Search</v-btn
-                >
+                  >Search</v-btn>
+                  <div v-if="result">
+                    <p>{{result}}</p>
+                  </div>
               </v-card>
             </v-col>
             <v-col cols="12" sm="6" md="8">
@@ -55,6 +57,9 @@ export default {
     source: String,
   },
   data: () => ({
+
+    result: '',
+
     car_table: [
       { text: "Makes", value: "Makes" },
       { text: "Models", value: "Models" },
@@ -64,8 +69,18 @@ export default {
   }),
 
   methods: {
+  
     requestCarInformation: function() {
       alert("hello");
+    },
+    async getWebInformation() {
+      let config = {
+        headers: {
+        'Accept': 'application/json'
+        }
+      }
+      var result = await this.$http.get('https://api.coindesk.com/v1/bpi/currentprice.json', config);
+      this.result = result.data;
     },
   },
 };
