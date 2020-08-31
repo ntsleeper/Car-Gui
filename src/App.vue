@@ -1,3 +1,4 @@
+
 <template>
   <v-app id="inspire">
     <v-app-bar app color="indigo" dark>
@@ -10,20 +11,17 @@
           <v-row no-gutters>
             <v-col cols="6" md="4">
               <v-card class="pa-2" outlined tile>
-                <v-combobox
-                  v-model="select"
-                  :items="items"
-                  label="Car Makes"
-                  multiple
-                ></v-combobox>
-                <v-btn
-                  v-on:click="getWebInformation()"
-                  small
-                  color="primary"
-                  >Search</v-btn>
-                  <div v-if="result">
-                    <p>{{result}}</p>
-                  </div>
+                <v-col class="d-flex" cols="12" sm="6">
+                  <v-select v-model = "make_result"
+                    :items = "all_makes"
+                    item-text = "make"
+                    label="Choose a make"
+                    result = value;
+                  ></v-select>
+                </v-col>
+                <div v-if="all_makes">
+                  <p>{{ make_result}}</p>
+                </div>
               </v-card>
             </v-col>
             <v-col cols="12" sm="6" md="8">
@@ -52,13 +50,26 @@
 </template>
 
 <script>
+// import SelectMake from './components/SelectMake';
+
 export default {
+  
+  name: 'app',
+  components: {
+   // SelectMake
+  },
+  
+  created: function() {
+    this.getAllMakes()
+  },
+
   props: {
     source: String,
   },
   data: () => ({
-
-    result: '',
+    
+    all_makes: '',
+    make_result: '',
 
     car_table: [
       { text: "Makes", value: "Makes" },
@@ -69,18 +80,22 @@ export default {
   }),
 
   methods: {
-  
     requestCarInformation: function() {
       alert("hello");
     },
-    async getWebInformation() {
+
+    async getAllMakes() {
       let config = {
         headers: {
-        'Accept': 'application/json'
-        }
-      }
-      var result = await this.$http.get('https://api.coindesk.com/v1/bpi/currentprice.json', config);
-      this.result = result.data;
+          Accept: "application/json",
+        },
+      };
+      var result = await this.$http.get(
+        "http://localhost/carPHP/src/getMakes.php",
+        config
+      );
+      alert(result.statusText);
+      this.all_makes = result.data;
     },
   },
 };
